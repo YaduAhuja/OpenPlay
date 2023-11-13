@@ -18,7 +18,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.text.font.FontWeight
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -58,7 +58,10 @@ private fun BottomBarItem(
             imageVector = if (isSelected) actionsInfo.selectedIcon else actionsInfo.icon,
             contentDescription = actionsInfo.displayText
         )
-        Text(text = actionsInfo.displayText)
+        Text(
+            text = actionsInfo.displayText,
+            fontWeight = if (isSelected) FontWeight.SemiBold else null
+        )
     }
 
 }

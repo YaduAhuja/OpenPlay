@@ -1,15 +1,13 @@
-package com.yaindustries.openplay.ui.screens
+package com.yaindustries.openplay.ui.screens.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -25,14 +23,12 @@ import androidx.compose.ui.unit.dp
 import com.yaindustries.openplay.ui.navigation.NavigationController
 
 @Composable
-fun HomeScreen(paddingValues: PaddingValues, navigationOptions: NavigationController) {
+fun HomeScreen(navigationOptions: NavigationController) {
     var useHorizontal by remember { mutableStateOf(true) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .padding(paddingValues)
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         if (useHorizontal) {
             Column {

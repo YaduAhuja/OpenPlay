@@ -1,27 +1,28 @@
 package com.yaindustries.openplay.ui.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.yaindustries.openplay.ui.screens.HomeScreen
 import com.yaindustries.openplay.ui.screens.LibraryScreen
+import com.yaindustries.openplay.ui.screens.home.HomeScreen
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    navigationOptions: NavigationController,
-    paddingValues: PaddingValues
+    navigationController: NavigationController
 ) {
 
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    NavHost(
+        navController = navController,
+        startDestination = navigationController.getStartDestination()
+    ) {
         composable(Screen.Home.route) {
-            HomeScreen(paddingValues, navigationOptions)
+            HomeScreen(navigationController)
         }
 
         composable(Screen.Library.route) {
-            LibraryScreen(paddingValues, navigationOptions)
+            LibraryScreen(navigationController)
         }
     }
 }
