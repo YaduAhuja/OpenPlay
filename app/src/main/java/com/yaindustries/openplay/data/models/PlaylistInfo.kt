@@ -3,15 +3,13 @@ package com.yaindustries.openplay.data.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.yaindustries.openplay.data.interfaces.Info
+import kotlinx.collections.immutable.ImmutableList
 
 @Entity
-data class SongInfo(
+data class PlaylistInfo(
     @PrimaryKey(autoGenerate = true)
     override val id: Int,
     override val name: String,
     override val artists: String,
-    val maxTime: Int,
-    val currentTime: Int,
-    val isFavourite: Boolean,
-    val isPlaying: Boolean
+    val songs: ImmutableList<SongInfo>
 ) : Info

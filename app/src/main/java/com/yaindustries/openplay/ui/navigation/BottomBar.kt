@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
@@ -74,7 +74,7 @@ private val bottomBarActions = persistentListOf(
         Screen.Home.route
     ),
     BottomBarActionsInfo(
-        Icons.Outlined.Favorite,
+        Icons.Outlined.FavoriteBorder,
         Icons.Filled.Favorite,
         "Library",
         Screen.Library.route
