@@ -10,6 +10,7 @@ data class SongInfo(
     override val id: Int,
     override val name: String,
     override val artists: String,
+    val album: String,
     val maxTime: Int,
     val currentTime: Int,
     val isFavourite: Boolean,

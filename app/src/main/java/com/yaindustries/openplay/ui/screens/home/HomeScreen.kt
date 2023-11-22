@@ -22,8 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.yaindustries.openplay.data.models.PlaylistInfo
 import com.yaindustries.openplay.data.interfaces.Info
+import com.yaindustries.openplay.data.models.PlaylistInfo
 import com.yaindustries.openplay.ui.common.PlaylistCard
 import com.yaindustries.openplay.ui.navigation.NavigationController
 import com.yaindustries.openplay.utils.Constants

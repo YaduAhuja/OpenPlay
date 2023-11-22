@@ -15,14 +15,21 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun BottomBar(currentRoute: String, navigationController: NavigationController) {
+fun BottomBar(navHostController: NavHostController, navigationController: NavigationController) {
+    val currentBackStackEntry by navHostController.currentBackStackEntryAsState()
+    val currentRoute =
+        currentBackStackEntry?.destination?.route ?: navigationController.getStartDestination()
+
     BottomAppBar(
         content = { AppBar(currentRoute, navigationController) }
     )

@@ -1,5 +1,7 @@
 package com.yaindustries.openplay.ui
 
+import android.provider.MediaStore
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,31 +20,32 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.yaindustries.openplay.data.models.SongInfo
+import com.yaindustries.openplay.ui.common.checkOrRequestPermissions
 import com.yaindustries.openplay.ui.navigation.BottomBar
 import com.yaindustries.openplay.ui.navigation.NavGraph
 import com.yaindustries.openplay.ui.navigation.NavigationController
 import com.yaindustries.openplay.ui.theme.OpenPlayTheme
+import com.yaindustries.openplay.utils.Utilities
 
 @Composable
 fun UiContainer(viewModel: UiContainerViewModel) {
     val navController = rememberNavController()
     val navigationController = remember { NavigationController(navController) }
-    val currentBackStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute =
-        currentBackStackEntry.value?.destination?.route
-            ?: navigationController.getStartDestination()
     val snackBarHostState = remember { SnackbarHostState() }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val audioPermissionsMap by checkOrRequestPermissions(Utilities.getAudioPermissions())
+    val context = LocalContext.current
 
     OpenPlayTheme {
         Scaffold(
@@ -55,8 +58,19 @@ fun UiContainer(viewModel: UiContainerViewModel) {
                 )
             },
             snackbarHost = { SnackbarHost(snackBarHostState) },
-            bottomBar = { BottomBar(currentRoute, navigationController) }
+            bottomBar = { BottomBar(navController, navigationController) }
         )
+    }
+
+    if (false !in audioPermissionsMap.values) {
+        Log.d(
+            "Ui Container",
+            "Version : ${MediaStore.getVersion(context, MediaStore.VOLUME_EXTERNAL_PRIMARY)}"
+        )
+        LaunchedEffect(Unit) {
+            viewModel.refreshSongs(context)
+            Log.d("Ui Container", "Launched effect")
+        }
     }
 }
 
