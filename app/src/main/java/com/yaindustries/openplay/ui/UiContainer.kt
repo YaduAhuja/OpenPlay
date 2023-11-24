@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.yaindustries.openplay.data.models.SongInfo
@@ -39,11 +40,11 @@ import com.yaindustries.openplay.ui.theme.OpenPlayTheme
 import com.yaindustries.openplay.utils.Utilities
 
 @Composable
-fun UiContainer(viewModel: UiContainerViewModel) {
+fun UiContainer(uiContainerVM: UiContainerViewModel = viewModel(factory = UiContainerViewModel.provideFactory())) {
     val navController = rememberNavController()
     val navigationController = remember { NavigationController(navController) }
     val snackBarHostState = remember { SnackbarHostState() }
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by uiContainerVM.uiState.collectAsStateWithLifecycle()
     val audioPermissionsMap by checkOrRequestPermissions(Utilities.getAudioPermissions())
     val context = LocalContext.current
 
@@ -68,7 +69,7 @@ fun UiContainer(viewModel: UiContainerViewModel) {
             "Version : ${MediaStore.getVersion(context, MediaStore.VOLUME_EXTERNAL_PRIMARY)}"
         )
         LaunchedEffect(Unit) {
-            viewModel.refreshSongs(context)
+            uiContainerVM.refreshSongs(context)
             Log.d("Ui Container", "Launched effect")
         }
     }

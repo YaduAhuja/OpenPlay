@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.yaindustries.openplay.data.models.SongInfo
 import com.yaindustries.openplay.ui.theme.OpenPlayTheme
 
 @Composable
@@ -73,7 +74,7 @@ private fun PlaylistCardPreview() {
 
 
 @Composable
-fun SongCard() {
+fun SongCard(songInfo: SongInfo) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -87,8 +88,12 @@ fun SongCard() {
             )
         }
         Column(modifier = Modifier.weight(0.75f)) {
-            Text(text = "Song Header")
-            Text(text = "Artists Name", fontSize = MaterialTheme.typography.bodySmall.fontSize)
+            Text(text = songInfo.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(
+                text = songInfo.artists,
+                fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                maxLines = 1
+            )
         }
         IconButton(onClick = { /*TODO*/ }, modifier = Modifier.weight(0.1f)) {
             Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Song Options")

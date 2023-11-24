@@ -21,13 +21,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yaindustries.openplay.data.models.PlaylistInfo
 import com.yaindustries.openplay.data.models.SongInfo
 import com.yaindustries.openplay.ui.common.PlaylistCard
@@ -35,13 +36,16 @@ import com.yaindustries.openplay.ui.common.SongCard
 import com.yaindustries.openplay.ui.navigation.NavigationController
 import com.yaindustries.openplay.utils.Constants
 import com.yaindustries.openplay.utils.Utilities
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun LibraryScreen(navigationController: NavigationController) {
-    val libraryView = rememberSaveable { mutableStateOf(LibraryViews.Playlists) }
+fun LibraryScreen(
+    navigationController: NavigationController,
+    libraryScreenViewModel: LibraryScreenViewModel = viewModel(factory = LibraryScreenViewModel.provideFactory())
+) {
     val permissions = Utilities.getAudioPermissions()
-
+    val uiState by libraryScreenViewModel.libraryScreenState.collectAsStateWithLifecycle()
     val permissionAvailable = Utilities.arePermissionsAvailable(LocalContext.current, *permissions)
 
     Column(
@@ -58,28 +62,18 @@ fun LibraryScreen(navigationController: NavigationController) {
                 Alignment.Start
             )
         ) {
-            Button(onClick = {
-                Utilities.updateValueByCheckingEquality(
-                    libraryView,
-                    LibraryViews.Playlists
-                )
-            }) {
+            Button(onClick = { libraryScreenViewModel.changeLibraryView(LibraryViews.Playlists) }) {
                 Text(text = "Playlists")
             }
-            Button(onClick = {
-                Utilities.updateValueByCheckingEquality(
-                    libraryView,
-                    LibraryViews.Songs
-                )
-            }) {
+            Button(onClick = { libraryScreenViewModel.changeLibraryView(LibraryViews.Songs) }) {
                 Text(text = "All Songs")
             }
         }
 
         if (false !in permissionAvailable.values) {
-            when (libraryView.value) {
+            when (uiState.libraryView) {
                 LibraryViews.Playlists -> PlaylistsView()
-                LibraryViews.Songs -> SongsView()
+                LibraryViews.Songs -> SongsView { uiState.songs }
             }
         } else {
             Column(
@@ -141,19 +135,15 @@ private fun PlaylistsView() {
 }
 
 @Composable
-private fun SongsView() {
+private fun SongsView(getSongsList: () -> ImmutableList<SongInfo>) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Constants.PADDING_SMALL)
     ) {
-        items(dummySongInfoList) {
-            SongCard()
+        items(getSongsList()) {
+            SongCard(it)
         }
     }
-}
-
-private enum class LibraryViews {
-    Playlists, Songs
 }
 
 private val dummySongInfo = SongInfo(0, "", "", "", 0, 0, isFavourite = false, isPlaying = false)

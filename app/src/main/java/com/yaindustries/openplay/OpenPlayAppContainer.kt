@@ -41,16 +41,16 @@ class OpenPlayAppContainer(context: Context) : AppContainer {
         AppConfigurationService(appConfigurationRepository)
     }
 
+    override val songInfoService: SongInfoService by lazy {
+        SongInfoService(transactionProvider, songInfoRepository)
+    }
+
     override val mediaStoreService by lazy {
         MediaStoreService(
             context,
             transactionProvider,
             appConfigurationService,
-            songInfoRepository
+            songInfoService
         )
-    }
-
-    override val songInfoService: SongInfoService by lazy {
-        SongInfoService(transactionProvider, songInfoRepository)
     }
 }

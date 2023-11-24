@@ -18,10 +18,17 @@ class SongInfoService(
         if (currentSong != null) {
             transactionProvider.runWithTransaction {
                 val updatedCurrentSong = currentSong.copy(isPlaying = false)
-                songInfoRepository.updateSongInfo(updatedCurrentSong)
-                songInfoRepository.updateSongInfo(newCurrentSong)
+                songInfoRepository.upsert(updatedCurrentSong)
+                songInfoRepository.upsert(newCurrentSong)
             }
         } else
-            songInfoRepository.updateSongInfo(newCurrentSong)
+            songInfoRepository.upsert(newCurrentSong)
     }
+
+    fun getAllSongsAsFlow() = songInfoRepository.getAllSongsAsFlow()
+
+    suspend fun upsert(songInfoCollection: Collection<SongInfo>) =
+        songInfoRepository.upsert(songInfoCollection)
+
+    suspend fun deleteAll() = songInfoRepository.deleteAll()
 }

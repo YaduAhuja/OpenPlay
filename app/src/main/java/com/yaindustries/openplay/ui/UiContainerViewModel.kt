@@ -3,8 +3,10 @@ package com.yaindustries.openplay.ui
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import com.yaindustries.openplay.AppContainer
+import androidx.lifecycle.viewmodel.CreationExtras
+import com.yaindustries.openplay.OpenPlayApplication
 import com.yaindustries.openplay.data.models.SongInfo
 import com.yaindustries.openplay.data.services.MediaStoreService
 import com.yaindustries.openplay.data.services.SongInfoService
@@ -47,13 +49,19 @@ class UiContainerViewModel(
     }
 
     companion object {
-        fun provideFactory(appContainer: AppContainer) =
+        fun provideFactory() =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                override fun <T : ViewModel> create(
+                    modelClass: Class<T>,
+                    creationExtras: CreationExtras
+                ): T {
+                    val application =
+                        checkNotNull(creationExtras[APPLICATION_KEY]) as OpenPlayApplication
+
                     return UiContainerViewModel(
-                        appContainer.mediaStoreService,
-                        appContainer.songInfoService
+                        application.appContainer.mediaStoreService,
+                        application.appContainer.songInfoService
                     ) as T
                 }
             }

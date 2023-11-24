@@ -8,7 +8,7 @@ import kotlinx.collections.immutable.ImmutableList
 @Entity
 data class PlaylistInfo(
     @PrimaryKey(autoGenerate = true)
-    override val id: Int,
+    override val id: Long,
     override val name: String,
     override val artists: String,
     val songs: ImmutableList<SongInfo>

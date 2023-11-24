@@ -1,10 +1,13 @@
 package com.yaindustries.openplay.utils
 
 import android.Manifest
+import android.content.ContentUris
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.provider.MediaStore
 import androidx.compose.runtime.MutableState
+import com.yaindustries.openplay.data.models.SongInfo
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableMap
 
@@ -40,4 +43,16 @@ object Utilities {
             else -> arrayOf()
         }
     }
+
+    fun getMediaStoreVersion(context: Context) =
+        MediaStore.getVersion(context, MediaStore.VOLUME_EXTERNAL_PRIMARY)
+
+    fun getMediaStoreGeneration(context: Context): Long {
+        if (isAndroidRAndUp())
+            return MediaStore.getGeneration(context, MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        return 0L
+    }
+
+    fun getMediaStoreContentURI(songInfo: SongInfo) =
+        ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songInfo.id)
 }

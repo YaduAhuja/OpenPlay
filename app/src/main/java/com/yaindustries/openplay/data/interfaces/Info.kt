@@ -1,7 +1,7 @@
 package com.yaindustries.openplay.data.interfaces
 
 interface Info {
-    val id: Int
+    val id: Long
     val name: String
     val artists: String
 }

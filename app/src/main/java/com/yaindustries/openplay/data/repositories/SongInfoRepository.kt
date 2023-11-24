@@ -2,9 +2,8 @@ package com.yaindustries.openplay.data.repositories
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
+import androidx.room.Upsert
 import com.yaindustries.openplay.data.models.SongInfo
 import kotlinx.coroutines.flow.Flow
 
@@ -17,16 +16,19 @@ interface SongInfoRepository {
     suspend fun getPlayingSong(): SongInfo?
 
     @Query("SELECT * FROM songInfo")
-    fun getAllSongs(): Flow<List<SongInfo>>
+    suspend fun getAllSongs(): List<SongInfo>
 
-    @Insert
-    suspend fun insertAll(vararg songInfo: SongInfo)
+    @Query("SELECT * FROM songInfo")
+    fun getAllSongsAsFlow(): Flow<List<SongInfo>>
 
-    @Update
-    suspend fun updateSongInfo(songInfo: SongInfo)
+    @Upsert
+    suspend fun upsert(songInfo: SongInfo)
 
-    @Insert
-    suspend fun insertAll(songInfoList: Collection<SongInfo>)
+    @Upsert
+    suspend fun upsert(vararg songInfo: SongInfo)
+
+    @Upsert
+    suspend fun upsert(songInfoList: Collection<SongInfo>)
 
     @Delete
     suspend fun delete(songInfo: SongInfo)
@@ -35,5 +37,5 @@ interface SongInfoRepository {
     suspend fun deleteAll()
 
     @Delete
-    suspend fun deleteAllByCollection(songInfoList: Collection<SongInfo>)
+    suspend fun deleteAll(songInfoList: Collection<SongInfo>)
 }

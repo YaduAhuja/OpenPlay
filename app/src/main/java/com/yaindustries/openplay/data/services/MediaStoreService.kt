@@ -6,7 +6,6 @@ import android.util.Log
 import com.yaindustries.openplay.TransactionProvider
 import com.yaindustries.openplay.data.models.AppConfiguration
 import com.yaindustries.openplay.data.models.SongInfo
-import com.yaindustries.openplay.data.repositories.SongInfoRepository
 import com.yaindustries.openplay.utils.Utilities
 import java.util.concurrent.TimeUnit
 
@@ -14,7 +13,7 @@ class MediaStoreService(
     private val context: Context,
     private val transactionProvider: TransactionProvider,
     private val appConfigurationService: AppConfigurationService,
-    private val songInfoRepository: SongInfoRepository
+    private val songInfoService: SongInfoService
 ) {
     private val TAG = "MediaStoreService"
 
@@ -22,11 +21,11 @@ class MediaStoreService(
         val appConfig = appConfigurationService.getAppConfig()
         val updatedAppConfig = getUpdatedAppConfig(appConfig)
 
-        if (appConfig.mediaStoreVersion == updatedAppConfig.mediaStoreVersion && appConfig.mediaStoreGeneration == updatedAppConfig.mediaStoreGeneration) {
+        if (!isMediaStoreChanged(appConfig)) {
             Log.d(TAG, "Media store version Same skipping media store refresh")
             return
         }
-
+        Log.d(TAG, "Media Store Version Changed Refreshing Data")
         val songInfoList = mutableListOf<SongInfo>()
         val collection = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         val projection = arrayOf(
@@ -70,7 +69,7 @@ class MediaStoreService(
 
                 songInfoList.add(
                     SongInfo(
-                        0,
+                        id,
                         name,
                         artist,
                         album,
@@ -84,8 +83,8 @@ class MediaStoreService(
         }
 
         transactionProvider.runWithTransaction {
-            songInfoRepository.deleteAll()
-            songInfoRepository.insertAll(songInfoList)
+            songInfoService.deleteAll()
+            songInfoService.upsert(songInfoList)
             appConfigurationService.updateAppConfig(updatedAppConfig)
         }
     }
@@ -101,5 +100,12 @@ class MediaStoreService(
             mediaStoreVersion = mediaStoreVersion,
             mediaStoreGeneration = mediaStoreGeneration
         )
+    }
+
+    private fun isMediaStoreChanged(appConfig: AppConfiguration): Boolean {
+        if (Utilities.isAndroidRAndUp())
+            return appConfig.mediaStoreVersion != Utilities.getMediaStoreVersion(context) ||
+                    appConfig.mediaStoreGeneration != Utilities.getMediaStoreGeneration(context)
+        return true
     }
 }
