@@ -5,14 +5,21 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.yaindustries.openplay.data.models.AppConfiguration
+import com.yaindustries.openplay.data.models.PlayerInfo
 import com.yaindustries.openplay.data.models.SongInfo
 import com.yaindustries.openplay.data.repositories.AppConfigurationRepository
+import com.yaindustries.openplay.data.repositories.PlayerInfoRepository
 import com.yaindustries.openplay.data.repositories.SongInfoRepository
 
-@Database(entities = [AppConfiguration::class, SongInfo::class], version = 1, exportSchema = false)
+@Database(
+    entities = [AppConfiguration::class, SongInfo::class, PlayerInfo::class],
+    version = 1,
+    exportSchema = false
+)
 abstract class OpenPlayRoomDatabase : RoomDatabase() {
     abstract fun songInfoRepository(): SongInfoRepository
     abstract fun appConfigRepository(): AppConfigurationRepository
+    abstract fun playerSongInfoRepository(): PlayerInfoRepository
 
     companion object {
         @Volatile

@@ -73,7 +73,7 @@ fun LibraryScreen(
         if (false !in permissionAvailable.values) {
             when (uiState.libraryView) {
                 LibraryViews.Playlists -> PlaylistsView()
-                LibraryViews.Songs -> SongsView { uiState.songs }
+                LibraryViews.Songs -> SongsView({ uiState.songs }, libraryScreenViewModel::playSong)
             }
         } else {
             Column(
@@ -135,18 +135,21 @@ private fun PlaylistsView() {
 }
 
 @Composable
-private fun SongsView(getSongsList: () -> ImmutableList<SongInfo>) {
+private fun SongsView(
+    getSongsList: () -> ImmutableList<SongInfo>,
+    onSongCardClick: (SongInfo) -> Unit
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Constants.PADDING_SMALL)
     ) {
         items(getSongsList()) {
-            SongCard(it)
+            SongCard(it, onSongCardClick)
         }
     }
 }
 
-private val dummySongInfo = SongInfo(0, "", "", "", 0, 0, isFavourite = false, isPlaying = false)
+private val dummySongInfo = SongInfo(0, "", "", "", 0)
 private val dummySongInfoList = persistentListOf(*Array(50) { dummySongInfo })
 private val dummyPlaylistInfoList = persistentListOf(
     PlaylistInfo(0, "Playlist0", "unknown", persistentListOf(dummySongInfo, dummySongInfo)),

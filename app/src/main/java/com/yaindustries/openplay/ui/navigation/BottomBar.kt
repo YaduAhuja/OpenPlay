@@ -5,11 +5,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.LibraryMusic
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import kotlinx.collections.immutable.persistentListOf
@@ -31,13 +33,18 @@ fun BottomBar(navHostController: NavHostController, navigationController: Naviga
         currentBackStackEntry?.destination?.route ?: navigationController.getStartDestination()
 
     BottomAppBar(
+        modifier = Modifier.height(72.dp),
         content = { AppBar(currentRoute, navigationController) }
     )
 }
 
 @Composable
 fun AppBar(currentRoute: String, navigationController: NavigationController) {
-    Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         bottomBarActions.forEach {
             BottomBarItem(
                 currentRoute = currentRoute,
@@ -81,8 +88,8 @@ private val bottomBarActions = persistentListOf(
         Screen.Home.route
     ),
     BottomBarActionsInfo(
-        Icons.Outlined.FavoriteBorder,
-        Icons.Filled.Favorite,
+        Icons.Outlined.LibraryMusic,
+        Icons.Filled.LibraryMusic,
         "Library",
         Screen.Library.route
     )

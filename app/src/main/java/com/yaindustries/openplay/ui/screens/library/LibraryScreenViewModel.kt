@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.yaindustries.openplay.OpenPlayApplication
 import com.yaindustries.openplay.data.models.SongInfo
+import com.yaindustries.openplay.data.services.PlayerInfoService
 import com.yaindustries.openplay.data.services.SongInfoService
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -29,7 +30,10 @@ data class LibraryScreenState(
     val songs: ImmutableList<SongInfo> = persistentListOf()
 )
 
-class LibraryScreenViewModel(private val songInfoService: SongInfoService) : ViewModel() {
+class LibraryScreenViewModel(
+    private val songInfoService: SongInfoService,
+    private val playerInfoService: PlayerInfoService
+) : ViewModel() {
 
     private val _libraryScreenState = MutableStateFlow(LibraryScreenState())
     val libraryScreenState = _libraryScreenState.asStateFlow()
@@ -45,6 +49,13 @@ class LibraryScreenViewModel(private val songInfoService: SongInfoService) : Vie
         if (currentView == libraryView)
             return
         _libraryScreenState.update { it.copy(libraryView = libraryView) }
+    }
+
+    fun playSong(songInfo: SongInfo) {
+//        mediaPlayerService.addSongAndPlay(songInfo)
+        viewModelScope.launch {
+            playerInfoService.changeCurrentPlayingSong(songInfo)
+        }
     }
 
     private suspend fun collectSongs() {
@@ -68,7 +79,8 @@ class LibraryScreenViewModel(private val songInfoService: SongInfoService) : Vie
                 ): T {
                     val application = checkNotNull(extras[APPLICATION_KEY]) as OpenPlayApplication
                     return LibraryScreenViewModel(
-                        application.appContainer.songInfoService
+                        application.appContainer.songInfoService,
+                        application.appContainer.playerInfoService
                     ) as T
                 }
             }

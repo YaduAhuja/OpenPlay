@@ -2,6 +2,7 @@ package com.yaindustries.openplay.ui.common
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -74,9 +75,11 @@ private fun PlaylistCardPreview() {
 
 
 @Composable
-fun SongCard(songInfo: SongInfo) {
+fun SongCard(songInfo: SongInfo, onClickAction: (SongInfo) -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClickAction(songInfo) },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {

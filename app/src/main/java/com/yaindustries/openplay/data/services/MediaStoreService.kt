@@ -73,10 +73,7 @@ class MediaStoreService(
                         name,
                         artist,
                         album,
-                        duration,
-                        0,
-                        false,
-                        false
+                        duration
                     )
                 )
             }

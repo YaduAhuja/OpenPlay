@@ -9,17 +9,14 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SongInfoRepository {
-    @Query("SELECT * FROM songInfo WHERE isPlaying = 1 LIMIT 1")
-    fun getPlayingSongAsFlow(): Flow<SongInfo?>
-
-    @Query("SELECT * FROM songInfo WHERE isPlaying = 1 LIMIT 1")
-    suspend fun getPlayingSong(): SongInfo?
-
-    @Query("SELECT * FROM songInfo")
+    @Query("SELECT * FROM SongInfo")
     suspend fun getAllSongs(): List<SongInfo>
 
-    @Query("SELECT * FROM songInfo")
+    @Query("SELECT * FROM SongInfo")
     fun getAllSongsAsFlow(): Flow<List<SongInfo>>
+
+    @Query("SELECT * from SongInfo where id= :id")
+    suspend fun findSongInfoById(id: Long): SongInfo?
 
     @Upsert
     suspend fun upsert(songInfo: SongInfo)
