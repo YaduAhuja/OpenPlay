@@ -18,6 +18,9 @@ interface SongInfoRepository {
     @Query("SELECT * from SongInfo where id= :id")
     suspend fun findSongInfoById(id: Long): SongInfo?
 
+    @Query("SELECT * from SongInfo where id= :id")
+    fun findSongInfoByIdAsFlow(id: Long): Flow<SongInfo?>
+
     @Upsert
     suspend fun upsert(songInfo: SongInfo)
 

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Album
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
@@ -36,7 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.yaindustries.openplay.data.models.PlayerInfo
+import com.yaindustries.openplay.data.models.PlayerInfoAndSongInfo
 import com.yaindustries.openplay.data.models.SongInfo
 import com.yaindustries.openplay.ui.common.checkOrRequestPermissions
 import com.yaindustries.openplay.ui.navigation.BottomBar
@@ -88,8 +89,7 @@ private fun ContentContainer(
     paddingValues: PaddingValues
 ) {
     val uiState by uiContainerVM.uiState.collectAsStateWithLifecycle()
-    val songInfo = uiState.songInfo
-    val playerInfo = uiState.playerInfo
+    val playerAndSongInfo = uiState.playerInfoAndSongInfo
 
     Box(
         modifier = Modifier
@@ -98,10 +98,9 @@ private fun ContentContainer(
         contentAlignment = Alignment.BottomCenter
     ) {
         NavGraph(navController, navigationController)
-        if (songInfo != null && playerInfo != null)
+        if (playerAndSongInfo != null)
             PlayerWidget(
-                songInfo,
-                playerInfo,
+                playerAndSongInfo,
                 uiContainerVM::handlePlayPauseClick,
                 uiContainerVM::handleFavoriteClick
             )
@@ -110,11 +109,12 @@ private fun ContentContainer(
 
 @Composable
 private fun PlayerWidget(
-    songInfo: SongInfo,
-    playerInfo: PlayerInfo,
+    playerInfoAndSongInfo: PlayerInfoAndSongInfo,
     onPlayPauseClick: () -> Unit = {},
     onFavoriteClick: (SongInfo) -> Unit = {}
 ) {
+    val playerInfo = playerInfoAndSongInfo.playerInfo
+    val songInfo = playerInfoAndSongInfo.songInfo
     Row(
         modifier = Modifier
             .padding(16.dp) // Margin
@@ -144,11 +144,19 @@ private fun PlayerWidget(
         }
 
         IconButton(onClick = { onFavoriteClick(songInfo) }) {
-            Icon(
-                imageVector = Icons.Rounded.FavoriteBorder,
-                contentDescription = "Favorite Button",
-                modifier = Modifier.weight(0.1f)
-            )
+            if (songInfo.isFavorite) {
+                Icon(
+                    imageVector = Icons.Rounded.Favorite,
+                    contentDescription = "Favorite Button",
+                    modifier = Modifier.weight(0.1f)
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Rounded.FavoriteBorder,
+                    contentDescription = "Favorite Button",
+                    modifier = Modifier.weight(0.1f)
+                )
+            }
         }
 
         IconButton(onClick = onPlayPauseClick) {

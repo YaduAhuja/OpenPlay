@@ -9,6 +9,8 @@ class SongInfoService(
 
     suspend fun findSongInfoById(id: Long) = songInfoRepository.findSongInfoById(id)
 
+    fun findSongInfoByIdAsFlow(id: Long) = songInfoRepository.findSongInfoByIdAsFlow(id)
+
     fun getAllSongsAsFlow() = songInfoRepository.getAllSongsAsFlow()
 
     suspend fun upsert(songInfoCollection: Collection<SongInfo>) =

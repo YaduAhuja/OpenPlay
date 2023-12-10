@@ -8,6 +8,7 @@ import com.yaindustries.openplay.data.repositories.SongInfoRepository
 import com.yaindustries.openplay.data.services.AppConfigurationService
 import com.yaindustries.openplay.data.services.MediaPlayerService
 import com.yaindustries.openplay.data.services.MediaStoreService
+import com.yaindustries.openplay.data.services.PlayerAndSongInfoService
 import com.yaindustries.openplay.data.services.PlayerInfoService
 import com.yaindustries.openplay.data.services.SongInfoService
 
@@ -19,6 +20,7 @@ interface AppContainer {
     val songInfoService: SongInfoService
     val mediaPlayerService: MediaPlayerService
     val playerInfoService: PlayerInfoService
+    val playerAndSongInfoService: PlayerAndSongInfoService
     val appConfigurationRepository: AppConfigurationRepository
     val songInfoRepository: SongInfoRepository
     val playerInfoRepository: PlayerInfoRepository
@@ -69,5 +71,9 @@ class OpenPlayAppContainer(context: Context) : AppContainer {
 
     override val mediaPlayerService by lazy {
         MediaPlayerService(context, songInfoService, playerInfoService)
+    }
+
+    override val playerAndSongInfoService by lazy {
+        PlayerAndSongInfoService(playerInfoService, songInfoService, transactionProvider)
     }
 }

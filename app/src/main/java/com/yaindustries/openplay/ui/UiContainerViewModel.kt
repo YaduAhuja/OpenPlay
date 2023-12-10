@@ -7,10 +7,11 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.yaindustries.openplay.OpenPlayApplication
-import com.yaindustries.openplay.data.models.PlayerInfo
+import com.yaindustries.openplay.data.models.PlayerInfoAndSongInfo
 import com.yaindustries.openplay.data.models.SongInfo
 import com.yaindustries.openplay.data.services.MediaPlayerService
 import com.yaindustries.openplay.data.services.MediaStoreService
+import com.yaindustries.openplay.data.services.PlayerAndSongInfoService
 import com.yaindustries.openplay.data.services.PlayerInfoService
 import com.yaindustries.openplay.data.services.SongInfoService
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,13 +21,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class UiContainerState(val playerInfo: PlayerInfo? = null, val songInfo: SongInfo? = null)
+data class UiContainerState(val playerInfoAndSongInfo: PlayerInfoAndSongInfo? = null)
 
 class UiContainerViewModel(
     private val mediaStoreService: MediaStoreService,
     private val playerSongInfoService: PlayerInfoService,
     private val songInfoService: SongInfoService,
-    private val mediaPlayerService: MediaPlayerService
+    private val mediaPlayerService: MediaPlayerService,
+    private val playerAndSongInfoService: PlayerAndSongInfoService
 ) : ViewModel() {
 
     private val _uiContainerState = MutableStateFlow(UiContainerState())
@@ -52,16 +54,12 @@ class UiContainerViewModel(
     }
 
     private suspend fun collectCurrentPlayingSongInfo() {
-        playerSongInfoService.getPlayerSongInfoAsFlow().stateIn(
+        playerAndSongInfoService.getPlayerAndSongInfoAsFlow().stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(stopTimeoutMillis = 10000),
             null
-        ).collect { playerInfo: PlayerInfo? ->
-            var songInfo: SongInfo? = null
-            playerInfo?.let {
-                songInfo = songInfoService.findSongInfoById(it.songInfoId)
-            }
-            _uiContainerState.update { UiContainerState(playerInfo, songInfo) }
+        ).collect { playerAndSongInfo ->
+            _uiContainerState.update { UiContainerState(playerAndSongInfo) }
         }
     }
 
@@ -84,7 +82,8 @@ class UiContainerViewModel(
                         application.appContainer.mediaStoreService,
                         application.appContainer.playerInfoService,
                         application.appContainer.songInfoService,
-                        application.appContainer.mediaPlayerService
+                        application.appContainer.mediaPlayerService,
+                        application.appContainer.playerAndSongInfoService
                     ) as T
                 }
             }
